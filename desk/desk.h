@@ -30,10 +30,12 @@ namespace Game {
         static int getch();
 
         static int waitKey(unsigned int delay);
+
         void move_generic(int dx, int dy, void (Desk::*move_func)());
 
     public:
         Desk(unsigned int width, unsigned int height);
+
         Desk(unsigned int width, unsigned int height, unsigned int move_delay);
 
         ~Desk();
@@ -53,16 +55,29 @@ namespace Game {
         void run();
 
         friend std::ostream &operator<<(std::ostream &os, const Desk &desk) {
+            os << "╔";
+            for (unsigned int i = 0; i < desk.width; i++) {
+                os << "══";
+            }
+            os << "╗" << std::endl;
+
             for (const Row &row: desk.field) {
+                os << "║";
                 for (const Cell &cell: row) {
                     os << cell;
                 }
-                os << std::endl;
+                os << "║" << std::endl;
             }
+
+            os << "╚";
+            for (unsigned int i = 0; i < desk.width; i++) {
+                os << "══";
+            }
+            os << "╝" << std::endl;
+
             os << "Score: " << desk.snake_position.size() << std::endl;
             return os;
         }
-
 
         unsigned int height = 1;
         unsigned int width = 1;

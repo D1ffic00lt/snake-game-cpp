@@ -55,8 +55,17 @@ void Game::Desk::spawn_player(const unsigned int x, const unsigned int y) {
     field[y][x].type = CellType::HEAD;
     snake_position.emplace_back(x, y);
 }
+
 void Game::Desk::move_generic(const int dx, const int dy, void (Desk::*move_func)()) {
     auto [x, y] = snake_position.back();
+    if (snake_position.size() > 1) {
+        if (auto [prev_x, prev_y] = snake_position[snake_position.size() - 2];
+            dx == -(x - prev_x) && dy == -(y - prev_y)) {
+            (this->*last_move)();
+            return;
+        }
+    }
+
     int new_x = x + dx;
     int new_y = y + dy;
     if (!in_bounds({new_x, new_y}) || !check_move({new_x, new_y})) {
@@ -77,10 +86,10 @@ void Game::Desk::move_generic(const int dx, const int dy, void (Desk::*move_func
     last_move = move_func;
 }
 
-void Game::Desk::move_up()    { move_generic(0, -1, &Desk::move_up); }
-void Game::Desk::move_down()  { move_generic(0,  1, &Desk::move_down); }
-void Game::Desk::move_left()  { move_generic(-1, 0, &Desk::move_left); }
-void Game::Desk::move_right() { move_generic(1,  0, &Desk::move_right); }
+void Game::Desk::move_up() { move_generic(0, -1, &Desk::move_up); }
+void Game::Desk::move_down() { move_generic(0, 1, &Desk::move_down); }
+void Game::Desk::move_left() { move_generic(-1, 0, &Desk::move_left); }
+void Game::Desk::move_right() { move_generic(1, 0, &Desk::move_right); }
 
 int Game::Desk::kbhit() {
     termios oldt{}, newt{};

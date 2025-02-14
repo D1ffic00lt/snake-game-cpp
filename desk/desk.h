@@ -23,7 +23,7 @@ namespace Game {
 
         [[nodiscard]] bool check_move(const Position &position) const;
 
-        bool in_bounds(const Position &position) const;
+        [[nodiscard]] bool in_bounds(const Position &position) const;
 
         static int kbhit();
 
@@ -31,7 +31,6 @@ namespace Game {
 
         static int waitKey(unsigned int delay);
         void move_generic(int dx, int dy, void (Desk::*move_func)());
-        bool in_bounds(int x, int y);
 
     public:
         Desk(unsigned int width, unsigned int height);

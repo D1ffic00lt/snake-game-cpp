@@ -1,5 +1,4 @@
 #include "desk.h"
-#include <random>
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -56,104 +55,33 @@ void Game::Desk::spawn_player(const unsigned int x, const unsigned int y) {
     field[y][x].type = CellType::HEAD;
     snake_position.emplace_back(x, y);
 }
-
-void Game::Desk::move_down() {
+void Game::Desk::move_generic(const int dx, const int dy, void (Desk::*move_func)()) {
     auto [x, y] = snake_position.back();
-    if (y + 1 >= height) {
+    int new_x = x + dx;
+    int new_y = y + dy;
+    if (!in_bounds({new_x, new_y}) || !check_move({new_x, new_y})) {
         active = false;
         return;
     }
-    if (!check_move(std::make_pair(x, y + 1))) {
-        active = false;
-        return;
-    }
+
     field[y][x].type = CellType::BODY;
-    snake_position.emplace_back(x, y + 1);
-    if (field[y + 1][x].type != CellType::APPLE) {
+    snake_position.emplace_back(new_x, new_y);
+    if (field[new_y][new_x].type != CellType::APPLE) {
         auto [old_x, old_y] = snake_position.front();
         field[old_y][old_x].type = CellType::EMPTY;
         snake_position.pop_front();
     } else {
-        field[y][x].type = CellType::BODY;
         --number_of_apples;
     }
-    field[y + 1][x].type = CellType::HEAD;
-    last_move = &Desk::move_down;
+    field[new_y][new_x].type = CellType::HEAD;
+    last_move = move_func;
 }
 
-void Game::Desk::move_up() {
-    auto [x, y] = snake_position.back();
-    if (y - 1 < 0) {
-        active = false;
-        return;
-    }
-    if (!check_move(std::make_pair(x, y - 1))) {
-        active = false;
-        return;
-    }
-    field[y][x].type = CellType::BODY;
-    snake_position.emplace_back(x, y - 1);
-    if (field[y - 1][x].type != CellType::APPLE) {
-        auto [old_x, old_y] = snake_position.front();
-        field[old_y][old_x].type = CellType::EMPTY;
-        snake_position.pop_front();
-    } else {
-        field[y][x].type = CellType::BODY;
-        --number_of_apples;
-    }
-    field[y - 1][x].type = CellType::HEAD;
-    last_move = &Desk::move_up;
-}
+void Game::Desk::move_up()    { move_generic(0, -1, &Desk::move_up); }
+void Game::Desk::move_down()  { move_generic(0,  1, &Desk::move_down); }
+void Game::Desk::move_left()  { move_generic(-1, 0, &Desk::move_left); }
+void Game::Desk::move_right() { move_generic(1,  0, &Desk::move_right); }
 
-void Game::Desk::move_left() {
-    auto [x, y] = snake_position.back();
-    if (x - 1 < 0) {
-        active = false;
-        return;
-    }
-    if (!check_move(std::make_pair(x - 1, y))) {
-        active = false;
-        return;
-    }
-    field[y][x].type = CellType::BODY;
-    snake_position.emplace_back(x - 1, y);
-    if (field[y][x - 1].type != CellType::APPLE) {
-        auto [old_x, old_y] = snake_position.front();
-        field[old_y][old_x].type = CellType::EMPTY;
-        snake_position.pop_front();
-    }
-    else {
-        field[y][x].type = CellType::BODY;
-        --number_of_apples;
-    }
-    field[y][x - 1].type = CellType::HEAD;
-    last_move = &Desk::move_left;
-}
-
-void Game::Desk::move_right() {
-    auto [x, y] = snake_position.back();
-    if (x + 1 >= width) {
-        active = false;
-        return;
-    }
-    if (!check_move(std::make_pair(x + 1, y))) {
-        active = false;
-        return;
-    }
-    field[y][x].type = CellType::BODY;
-    snake_position.emplace_back(x + 1, y);
-    if (field[y][x + 1].type != CellType::APPLE) {
-        auto [old_x, old_y] = snake_position.front();
-        field[old_y][old_x].type = CellType::EMPTY;
-        snake_position.pop_front();
-    }
-    else {
-        field[y][x].type = CellType::BODY;
-        --number_of_apples;
-    }
-    field[y][x + 1].type = CellType::HEAD;
-    last_move = &Desk::move_right;
-}
 int Game::Desk::kbhit() {
     termios oldt{}, newt{};
 
@@ -240,4 +168,9 @@ void Game::Desk::run() {
 bool Game::Desk::check_move(const Position &position) const {
     return field[position.second][position.first].type != CellType::BODY &&
            field[position.second][position.first].type != CellType::HEAD;
+}
+
+bool Game::Desk::in_bounds(const Position &position) const {
+    return (position.first >= 0 && position.first < width &&
+            position.second >= 0 && position.second < height);
 }

@@ -229,7 +229,6 @@ void Game::Desk::run() {
             case 'q':
                 exit(0);
             default:
-                std::cout << "LAST MOVE" << std::endl;
                 if (last_move != nullptr) {
                     (this->*last_move)();
                 }

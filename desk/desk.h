@@ -52,7 +52,7 @@ namespace Game {
         friend std::ostream &operator<<(std::ostream &os, const Desk &desk) {
             for (const Row &row: desk.field) {
                 for (const Cell &cell: row) {
-                    os << cell << "  ";
+                    os << cell;
                 }
                 os << std::endl;
             }

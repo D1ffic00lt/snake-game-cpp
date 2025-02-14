@@ -1,6 +1,12 @@
 #include <iostream>
 #include "desk/desk.h"
 
+#ifdef _WIN32
+    #include <windows.h>
+#else
+#include <cstdlib>
+#endif
+
 int main() {
     system("clear");
     unsigned int width, height, apples, move_delay;
@@ -16,6 +22,24 @@ int main() {
     std::cin >> move_delay;
 
     system("clear");
+#ifdef _WIN32
+        HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (hStdout == INVALID_HANDLE_VALUE) {
+            return 1;
+        }
+
+        COORD bufferSize = { static_cast<SHORT>(width * 2 + 2), static_cast<SHORT>(height + 5) };
+        if (!SetConsoleScreenBufferSize(hStdout, bufferSize)) {
+            return 1
+        }
+
+        SMALL_RECT windowSize = { 0, 0, static_cast<SHORT>(width * 2 + 2 - 1), static_cast<SHORT>(height + 5 - 1) };
+        if (!SetConsoleWindowInfo(hStdout, TRUE, &windowSize)) {
+            return 1
+        }
+#else
+    std::cout << "\033[8;" << height + 5 << ";" << width * 2 + 2 << "t";
+#endif
 
     Game::Desk desk(width, height, move_delay);
     desk.apples_to_spawn = apples;

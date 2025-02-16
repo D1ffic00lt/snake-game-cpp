@@ -4,6 +4,7 @@
 #include <vector>
 #include <deque>
 #include <random>
+#include <sstream>
 #include "cell.h"
 
 
@@ -55,27 +56,31 @@ namespace Game {
         void run();
 
         friend std::ostream &operator<<(std::ostream &os, const Desk &desk) {
-            os << "╔";
-            for (unsigned int i = 0; i < desk.width; i++) {
-                os << "══";
-            }
-            os << "╗" << std::endl;
+            std::ostringstream buffer;
 
-            for (const Row &row: desk.field) {
-                os << "║";
-                for (const Cell &cell: row) {
-                    os << cell;
+            buffer << "╔";
+            for (unsigned int i = 0; i < desk.width; i++) {
+                buffer << "══";
+            }
+            buffer << "╗" << std::endl;
+
+            for (const Row &row : desk.field) {
+                buffer << "║";
+                for (const Cell &cell : row) {
+                    buffer << cell;
                 }
-                os << "║" << std::endl;
+                buffer << "║" << std::endl;
             }
 
-            os << "╚";
+            buffer << "╚";
             for (unsigned int i = 0; i < desk.width; i++) {
-                os << "══";
+                buffer << "══";
             }
-            os << "╝" << std::endl;
+            buffer << "╝" << std::endl;
 
-            os << "Score: " << desk.snake_position.size() << std::endl;
+            buffer << "Score: " << desk.snake_position.size() << std::endl;
+
+            os << buffer.str();
             return os;
         }
 

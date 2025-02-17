@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-Game::Desk::Desk(const unsigned int width, const unsigned int height) {
+Game::Desk::Desk(const unsigned short width, const unsigned short height) {
     this->width = width;
     this->height = height;
     field.resize(height);
@@ -16,7 +16,7 @@ Game::Desk::Desk(const unsigned int width, const unsigned int height) {
     last_move = &Desk::move_right;
 }
 
-Game::Desk::Desk(const unsigned int width, const unsigned int height, const unsigned int move_delay) {
+Game::Desk::Desk(const unsigned short width, const unsigned short height, const unsigned int move_delay) {
     this->width = width;
     this->height = height;
     this->move_delay = move_delay;

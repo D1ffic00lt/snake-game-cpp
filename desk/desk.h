@@ -35,9 +35,9 @@ namespace Game {
         void move_generic(int dx, int dy, void (Desk::*move_func)());
 
     public:
-        Desk(unsigned int width, unsigned int height);
+        Desk(unsigned short width, unsigned short height);
 
-        Desk(unsigned int width, unsigned int height, unsigned int move_delay);
+        Desk(unsigned short width, unsigned short height, unsigned int move_delay);
 
         ~Desk();
 
@@ -84,8 +84,8 @@ namespace Game {
             return os;
         }
 
-        unsigned int height = 1;
-        unsigned int width = 1;
+        unsigned short height = 1;
+        unsigned short width = 1;
         unsigned int apples_to_spawn = width * height / 8 + 1;
         DeskField field;
     };

@@ -9,7 +9,7 @@
 
 int main() {
     system("clear");
-    unsigned int width, height, apples, move_delay;
+    unsigned short width, height, apples, move_delay;
     std::cout << "Enter width and height of the desk: ";
     std::cin >> width >> height;
     std::cout << "Enter number of apples (start): ";

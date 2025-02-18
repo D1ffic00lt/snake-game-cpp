@@ -1,6 +1,6 @@
 #include <iostream>
 #include "desk/desk.h"
-
+#include "database/database.h"
 #ifdef _WIN32
     #include <windows.h>
 #else
@@ -9,7 +9,12 @@
 
 int main() {
     system("clear");
+    Game::Database db(".database.db");
+    db.create_tables();
     unsigned short width, height, apples, move_delay;
+    std::string name;
+    std::cout << "Enter your name: ";
+    std::cin >> name;
     std::cout << "Enter width and height of the desk: ";
     std::cin >> width >> height;
     std::cout << "Enter number of apples (start): ";
@@ -41,7 +46,7 @@ int main() {
     std::cout << "\033[8;" << height + 5 << ";" << width * 2 + 2 << "t";
 #endif
 
-    Game::Desk desk(width, height, move_delay);
+    Game::Desk desk(width, height, move_delay, name, db);
     desk.apples_to_spawn = apples;
     desk.spawn_player(width / 2, height / 2);
     desk.spawn_apples(apples);

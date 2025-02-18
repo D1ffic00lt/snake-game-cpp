@@ -6,7 +6,7 @@
 #include <random>
 #include <sstream>
 #include "cell.h"
-
+#include "../database/database.h"
 
 namespace Game {
     using Row = std::vector<Cell>;
@@ -20,6 +20,9 @@ namespace Game {
 
         unsigned int number_of_apples = 0;
         unsigned int move_delay = 500;
+        int user_id;
+        std::string name;
+        Database &db;
         std::deque<Position> snake_position;
 
         [[nodiscard]] bool check_move(const Position &position) const;
@@ -35,9 +38,9 @@ namespace Game {
         void move_generic(int dx, int dy, void (Desk::*move_func)());
 
     public:
-        Desk(unsigned short width, unsigned short height);
+        Desk(unsigned short width, unsigned short height, unsigned int move_delay, const std::string &name,
+             Database &db);
 
-        Desk(unsigned short width, unsigned short height, unsigned int move_delay);
 
         ~Desk();
 
@@ -64,9 +67,9 @@ namespace Game {
             }
             buffer << "╗" << std::endl;
 
-            for (const Row &row : desk.field) {
+            for (const Row &row: desk.field) {
                 buffer << "║";
-                for (const Cell &cell : row) {
+                for (const Cell &cell: row) {
                     buffer << cell;
                 }
                 buffer << "║" << std::endl;

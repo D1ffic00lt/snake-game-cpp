@@ -6,25 +6,19 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-Game::Desk::Desk(const unsigned short width, const unsigned short height) {
-    this->width = width;
-    this->height = height;
-    field.resize(height);
-    for (Row &row: field) {
-        row.resize(width);
-    }
-    last_move = &Desk::move_right;
-}
-
-Game::Desk::Desk(const unsigned short width, const unsigned short height, const unsigned int move_delay) {
+Game::Desk::Desk(const unsigned short width, const unsigned short height, const unsigned int move_delay,
+                 const std::string &name, Database &db): db(db) {
     this->width = width;
     this->height = height;
     this->move_delay = move_delay;
+    this->name = name;
+    db.insert_user(this->name);
     field.resize(height);
     for (Row &row: field) {
         row.resize(width);
     }
     last_move = &Desk::move_right;
+    user_id = db.get_id_by_name(name);
 }
 
 Game::Desk::~Desk() = default;
@@ -172,6 +166,12 @@ void Game::Desk::run() {
         }
     }
     std::cout << "GAME OVER" << std::endl;
+    const int score = static_cast<int>(snake_position.size());
+    const int speed = static_cast<int>(move_delay);
+    db.insert_score(user_id, speed, width * height, score, score * (speed / 100));
+    const std::string top = db.get_top();
+    std::cout << "Top 10 players:" << std::endl;
+    std::cout << top << std::endl;
 }
 
 bool Game::Desk::check_move(const Position &position) const {
